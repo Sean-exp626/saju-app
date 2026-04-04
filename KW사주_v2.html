@@ -2413,12 +2413,12 @@ function renderYukcheon(pillars, dp, gender) {
         <div class="detail-item">
           <div class="di-title">천간(天干) — 드러나는 기운</div>
           <div class="di-val">${g.stemChar} → <span style="color:var(--gold)">${g.stemTG||'—'}</span></div>
-          <div class="di-desc">${g.stemTG && TENSHIN_PSY[g.stemTG] ? TENSHIN_PSY[g.stemTG].desc.substring(0,60)+'…' : g.stemTG==='일간(本人)'?'나 자신을 나타내는 핵심 글자입니다.':''}</div>
+          <div class="di-desc">${g.stemTG && TENSHIN_PSY[g.stemTG] ? TENSHIN_PSY[g.stemTG].desc : g.stemTG==='일간(本人)'?'나 자신을 나타내는 핵심 글자입니다.':''}</div>
         </div>
         <div class="detail-item">
           <div class="di-title">지지(地支) — 숨겨진 인연</div>
           <div class="di-val">${g.branchChar} → <span style="color:var(--gold)">${g.branchTG||'—'}</span></div>
-          <div class="di-desc">${g.branchTG && TENSHIN_PSY[g.branchTG] ? TENSHIN_PSY[g.branchTG].desc.substring(0,60)+'…' : ''}</div>
+          <div class="di-desc">${g.branchTG && TENSHIN_PSY[g.branchTG] ? TENSHIN_PSY[g.branchTG].desc : ''}</div>
         </div>
       </div>
     </div>`;
@@ -3234,7 +3234,7 @@ function renderSajuHaeseol(pillars, dp, gender) {
             <td style="color:${p.color};font-weight:700">${tg}</td>
             <td style="text-align:center">${c}회</td>
             <td style="font-size:.8rem">${p.symbol}</td>
-            <td style="font-size:.78rem;color:var(--sub)">${p.desc.substring(0,50)}…</td>
+            <td style="font-size:.78rem;color:var(--sub)">${p.desc}</td>
           </tr>` : '';
         }).join('')}
       </tbody>
