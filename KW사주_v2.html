@@ -2171,9 +2171,9 @@ function renderSunggyeok(pillars, dp, gender) {
 
   // 사길신 / 사흉신 분류
   const gilTG = ['식신(食神)','정재(正財)','정관(正官)','정인(正印)'];
-  const흉TG = ['겁재(劫財)','상관(傷官)','편관(偏官)','편인(偏印)'];
+  const hyungTG = ['겁재(劫財)','상관(傷官)','편관(偏官)','편인(偏印)'];
   const myGil = Object.keys(tenGodCounts).filter(tg => gilTG.includes(tg));
-  const my흉 = Object.keys(tenGodCounts).filter(tg => 흉TG.includes(tg));
+  const my흉 = Object.keys(tenGodCounts).filter(tg => hyungTG.includes(tg));
 
   html += `<div class="haeseol-section">
     <h4><span class="num">3</span>${tip('사길신','사길신')} · ${tip('사흉신','사흉신')} 분포</h4>
