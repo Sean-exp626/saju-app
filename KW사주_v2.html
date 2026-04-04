@@ -425,6 +425,12 @@ input:focus,select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 
     </div>
   </div>
 
+  <!-- 이름 × 사주 종합 궁합 (만세력 바로 아래) -->
+  <div class="card res-section" id="compSection" style="display:none">
+    <div class="res-title">이름 × 사주 종합 분석</div>
+    <div id="compContent"></div>
+  </div>
+
   <!-- 사주 + 이름 핵심 정리 -->
   <div class="card res-section" id="coreCard">
     <div class="res-title">사주 · 이름 핵심 정리</div>
@@ -488,11 +494,6 @@ input:focus,select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 
     <div class="suri-grid" id="suriContent"></div>
   </div>
 
-  <!-- 종합 -->
-  <div class="card res-section" id="compSection" style="display:none">
-    <div class="res-title">이름 × 사주 종합 궁합</div>
-    <div id="compContent"></div>
-  </div>
 
 </div>
 
@@ -2955,20 +2956,37 @@ function renderComprehensive(pillars, dp) {
   const filled = slotData.filter(s => s !== null);
   if (!filled.length) return;
 
+  const OH_COLOR = ['var(--wood)','var(--fire)','var(--earth)','var(--metal)','var(--water)'];
+  const OH_CH    = ['木','火','土','金','水'];
+  const OH_KO    = ['목(木)','화(火)','토(土)','금(金)','수(水)'];
+  const OH_FULL  = ['목(木) — 나무','화(火) — 불','토(土) — 흙','금(金) — 쇠','수(水) — 물'];
+  const OH_TRAIT = [
+    '성장·창조·인(仁)·봄·동방·청색',
+    '열정·표현·예(禮)·여름·남방·적색',
+    '안정·신뢰·신(信)·환절기·중앙·황색',
+    '결단·원칙·의(義)·가을·서방·백색',
+    '지혜·유연·지(智)·겨울·북방·흑색'
+  ];
+  const BAL_NAME = ['아음(牙音)ㄱ·ㄲ·ㅋ','설음(舌音)ㄴ·ㄷ·ㄹ·ㅌ','순음(脣音)ㅁ·ㅂ·ㅍ','치음(齒音)ㅅ·ㅈ·ㅊ','후음(喉音)ㅇ·ㅎ'];
+
+  // ── 사주 오행 분석 ──
   const ilOh = STEMS_OH[dp.s];
   const cnt = [0,0,0,0,0];
-  pillars.forEach(p => {
-    cnt[STEMS_OH[p.s]]++;
-    cnt[BRANCHES_OH[p.b]]++;
-  });
-
-  // Dominant oh in saju
+  pillars.forEach(p => { cnt[STEMS_OH[p.s]]++; cnt[BRANCHES_OH[p.b]]++; });
+  const total8 = cnt.reduce((a,b)=>a+b,0);
   const maxCnt = Math.max(...cnt);
   const dominant = cnt.map((c,i)=>({c,i})).filter(x=>x.c===maxCnt).map(x=>x.i);
+  const weakInSaju = cnt.map((c,i)=>({c,i})).filter(x=>x.c===0).map(x=>x.i);
+  const lowInSaju  = cnt.map((c,i)=>({c,i})).filter(x=>x.c<=1).map(x=>x.i);
 
-  // Name ohaeng profile
+  // 용신·기신
+  const sheng=[1,2,0,4,3], ke=[2,3,4,0,1];
+  const yongshinOh = sheng[ilOh];
+  const gisinOh    = ke[ilOh];
+
+  // ── 이름 오행 분석 ──
   const nameJari = [0,0,0,0,0];
-  const nameBal = [0,0,0,0,0];
+  const nameBal  = [0,0,0,0,0];
   const nameSuri = [0,0,0,0,0];
   filled.forEach(d => {
     nameJari[d.jarioh]++;
@@ -2976,63 +2994,340 @@ function renderComprehensive(pillars, dp) {
     if (b !== null) nameBal[b]++;
     nameSuri[getSuriOh(d.strokes)]++;
   });
-
-  // Find most frequent in name
+  const nameTotal = filled.length;
   const nameMaxJari = nameJari.indexOf(Math.max(...nameJari));
-  const nameMaxSuri = nameSuri.indexOf(Math.max(...nameSuri));
+  const nameBoostYong  = nameJari[yongshinOh] > 0;
+  const nameBoostGisin = nameJari[gisinOh] > 0;
+  const nameSupplements = weakInSaju.some(wi => nameJari[wi] > 0);
 
-  // Check if name complements saju
-  const weakInSaju = cnt.map((c,i)=>({c,i})).filter(x=>x.c<=1).map(x=>x.i);
-  const nameSupplements = weakInSaju.some(wi =>
-    nameJari[wi] > 0 || nameBal[wi] > 0 || nameSuri[wi] > 0
-  );
-
-  // 81수리 overall luck
-  const total = filled.reduce((a,s)=>a+s.strokes, 0);
-  const jungSuri = getSuri81(total);
+  // ── 81수리 ──
+  const totalStrokes = filled.reduce((a,s)=>a+s.strokes,0);
+  const jungSuri = getSuri81(totalStrokes);
   const luckScore = jungSuri ? jungSuri.l : 0;
 
-  let overallText = '';
-  if (luckScore >= 2) overallText = '이름의 총획이 매우 길한 수리에 해당합니다. 일생 전체에 걸쳐 좋은 운기가 흐릅니다.';
-  else if (luckScore === 1) overallText = '이름의 총획이 길한 수리에 해당합니다. 꾸준한 노력으로 좋은 결실을 맺을 것입니다.';
-  else if (luckScore === 0) overallText = '이름의 총획이 평이한 수리에 해당합니다. 특별한 장해 없이 평탄한 삶이 예상됩니다.';
-  else if (luckScore === -1) overallText = '이름의 총획이 다소 불리한 수리에 해당합니다. 신중하고 꾸준한 노력이 필요합니다.';
-  else overallText = '이름의 총획이 불리한 수리에 해당합니다. 다른 오행적 균형을 통해 보완하는 것이 좋습니다.';
+  // ── 종합 점수 계산 (10점 만점) ──
+  let score = 5;
+  if (nameBoostYong)   score += 2;
+  if (!nameBoostGisin) score += 1;
+  if (nameJari[yongshinOh] >= 2) score += 1;
+  if (luckScore >= 2)  score += 1;
+  else if (luckScore < 0) score -= 1;
+  if (weakInSaju.length > 0 && nameSupplements) score += 1;
+  score = Math.min(10, Math.max(1, score));
+  const scoreColor = score >= 8 ? 'var(--wood)' : score >= 6 ? 'var(--earth)' : 'var(--fire)';
+  const scoreLabel = score >= 8 ? '매우 좋음' : score >= 6 ? '좋음' : score >= 4 ? '보통' : '보완 필요';
 
+  // ── 섹션 1: 종합 점수 배너 ──
   let html = `
-    <div class="comp-box">
-      <h4>사주 오행과 이름 오행의 조화</h4>
-      <p>사주에서 강한 오행은 <strong>${dominant.map(i=>OH_NAME[i]).join(', ')}</strong>입니다.
-      이름의 자원오행 중 가장 두드러진 것은 <strong>${OH_NAME[nameMaxJari]}</strong>입니다.</p>
-      <p style="margin-top:8px">${nameSupplements
-        ? `이름이 사주에서 부족한 <strong>${weakInSaju.map(i=>OH_NAME[i]).join(', ')}</strong>의 기운을 일부 보완해주고 있어 긍정적입니다.`
-        : `이름의 오행이 사주의 주도 오행과 유사합니다. 사주의 기운이 더욱 강화될 수 있습니다.`}
+  <div style="background:linear-gradient(135deg,var(--card2),var(--card));border:2px solid ${scoreColor};border-radius:14px;padding:20px 24px;margin-bottom:18px;display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+    <div style="text-align:center;min-width:80px">
+      <div style="font-size:2.4rem;font-weight:900;color:${scoreColor};line-height:1">${score}</div>
+      <div style="font-size:.72rem;color:var(--muted);margin-top:2px">/ 10점</div>
+      <div style="font-size:.8rem;font-weight:700;color:${scoreColor};margin-top:4px">${scoreLabel}</div>
+    </div>
+    <div style="flex:1;min-width:200px">
+      <div style="font-size:1rem;font-weight:700;color:var(--gold);margin-bottom:6px">이름 × 사주 종합 조화 점수</div>
+      <div style="font-size:.84rem;color:var(--sub);line-height:1.7">
+        일간 <strong style="color:${OH_COLOR[ilOh]}">${STEMS[dp.s]}(${OH_CH[ilOh]})</strong> 기준 ·
+        용신 <strong style="color:${OH_COLOR[yongshinOh]}">${OH_CH[yongshinOh]}</strong> ·
+        기신 <strong style="color:${OH_COLOR[gisinOh]}">${OH_CH[gisinOh]}</strong><br>
+        ${nameBoostYong ? `✅ 이름에 용신 ${OH_CH[yongshinOh]} 기운 포함` : `⚠️ 이름에 용신 ${OH_CH[yongshinOh]} 기운 없음`}
+        &nbsp;·&nbsp;
+        ${nameBoostGisin ? `⚠️ 이름에 기신 ${OH_CH[gisinOh]} 기운 포함` : `✅ 이름에 기신 ${OH_CH[gisinOh]} 기운 없음`}
+      </div>
+    </div>
+  </div>`;
+
+  // ── 섹션 2: 글자별 상세 분석 ──
+  html += `<div class="comp-box">
+    <h4>① 이름 글자별 오행 상세 분석</h4>
+    <p style="font-size:.83rem;color:var(--sub);margin-bottom:12px">
+      한자 이름의 기운을 결정하는 세 가지 오행 — <strong>자원오행(字源五行)</strong>·<strong>발음오행(發音五行)</strong>·<strong>수리오행(數理五行)</strong>을 글자 하나하나씩 분석합니다.
+      세 오행이 모두 용신(用神)과 상생하거나 일치할수록 이름의 기운이 삶에 긍정적으로 작용합니다.
+    </p>
+    <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:.82rem">
+      <thead>
+        <tr style="background:var(--card2);color:var(--muted);font-size:.72rem;letter-spacing:.05em">
+          <th style="padding:8px 10px;text-align:left;border-bottom:1px solid var(--border)">한자</th>
+          <th style="padding:8px 10px;border-bottom:1px solid var(--border)">획수</th>
+          <th style="padding:8px 10px;border-bottom:1px solid var(--border)">자원오행</th>
+          <th style="padding:8px 10px;border-bottom:1px solid var(--border)">발음오행</th>
+          <th style="padding:8px 10px;border-bottom:1px solid var(--border)">수리오행</th>
+          <th style="padding:8px 10px;text-align:left;border-bottom:1px solid var(--border)">용신 관계</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${filled.map(d => {
+          const boh = getBaleumOh(d.reading);
+          const soh = getSuriOh(d.strokes);
+          const jariRel = d.jarioh === yongshinOh ? '🟢 용신 일치' : d.jarioh === gisinOh ? '🔴 기신 주의' : sheng[d.jarioh] === yongshinOh ? '🔵 용신 상생' : '⚪ 중립';
+          const balRel  = boh === yongshinOh ? '🟢 용신' : boh === gisinOh ? '🔴 기신' : boh !== null && sheng[boh] === yongshinOh ? '🔵 상생' : '⚪';
+          const suriRel = soh === yongshinOh ? '🟢 용신' : soh === gisinOh ? '🔴 기신' : sheng[soh] === yongshinOh ? '🔵 상생' : '⚪';
+          return `<tr style="border-bottom:1px solid var(--border)20">
+            <td style="padding:9px 10px"><strong style="font-size:1.1rem">${d.char}</strong> <span style="font-size:.72rem;color:var(--muted)">${d.reading} · ${d.meaning}</span></td>
+            <td style="padding:9px 10px;text-align:center;color:var(--sub)">${d.strokes}획</td>
+            <td style="padding:9px 10px;text-align:center;font-weight:700;color:${OH_COLOR[d.jarioh]}">${OH_CH[d.jarioh]}</td>
+            <td style="padding:9px 10px;text-align:center;font-weight:700;color:${boh!==null?OH_COLOR[boh]:'var(--muted)'}">${boh!==null?OH_CH[boh]:'—'}</td>
+            <td style="padding:9px 10px;text-align:center;font-weight:700;color:${OH_COLOR[soh]}">${OH_CH[soh]}</td>
+            <td style="padding:9px 10px;font-size:.75rem">${jariRel}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+    </div>
+  </div>`;
+
+  // ── 섹션 3: 사주 vs 이름 오행 분포 비교 ──
+  html += `<div class="comp-box">
+    <h4>② 사주 오행 분포 vs 이름 오행 분포 비교</h4>
+    <p style="font-size:.83rem;color:var(--sub);margin-bottom:14px">
+      사주 8자의 오행 분포와 이름 자원오행을 한눈에 비교합니다.
+      <strong>사주에 없거나 약한 오행</strong>을 이름이 보완해주는 구조가 이상적입니다.
+      용신(用神) 오행이 이름에 많을수록 삶에 도움이 되는 기운이 강해집니다.
+    </p>
+    ${[0,1,2,3,4].map(i => {
+      const sajuPct  = Math.round(cnt[i] / total8 * 100);
+      const namePct  = nameTotal > 0 ? Math.round(nameJari[i] / nameTotal * 100) : 0;
+      const isYong = i === yongshinOh, isGi = i === gisinOh;
+      return `<div style="margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+          <span style="width:38px;font-size:.78rem;font-weight:700;color:${OH_COLOR[i]}">${OH_CH[i]}</span>
+          ${isYong ? `<span style="font-size:.65rem;color:${OH_COLOR[i]};border:1px solid ${OH_COLOR[i]};border-radius:4px;padding:1px 5px">용신</span>` : isGi ? `<span style="font-size:.65rem;color:var(--fire);border:1px solid var(--fire);border-radius:4px;padding:1px 5px">기신</span>` : ''}
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;margin-bottom:2px">
+          <span style="font-size:.7rem;color:var(--muted);width:52px">사주 ${cnt[i]}자</span>
+          <div style="flex:1;height:9px;background:rgba(0,0,0,.2);border-radius:5px;overflow:hidden">
+            <div style="height:100%;width:${sajuPct}%;background:${OH_COLOR[i]};border-radius:5px;opacity:.85"></div>
+          </div>
+          <span style="font-size:.7rem;color:var(--sub);width:28px">${sajuPct}%</span>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <span style="font-size:.7rem;color:var(--muted);width:52px">이름 ${nameJari[i]}자</span>
+          <div style="flex:1;height:9px;background:rgba(0,0,0,.2);border-radius:5px;overflow:hidden">
+            <div style="height:100%;width:${namePct}%;background:${OH_COLOR[i]};border-radius:5px;opacity:.5;border:1px dashed ${OH_COLOR[i]}"></div>
+          </div>
+          <span style="font-size:.7rem;color:var(--sub);width:28px">${namePct}%</span>
+        </div>
+      </div>`;
+    }).join('')}
+    <div style="margin-top:10px;padding:10px 12px;background:var(--card2);border-radius:8px;font-size:.8rem;color:var(--sub);line-height:1.65">
+      ${weakInSaju.length > 0
+        ? `사주에 <strong style="color:var(--fire)">${weakInSaju.map(i=>OH_CH[i]).join(', ')}</strong> 오행이 전혀 없습니다.
+          ${nameSupplements ? `이름이 그 중 일부를 보완해주고 있어 긍정적입니다.` : `이름에서도 해당 오행이 부족합니다. 의식적으로 해당 오행 색상·방위·음식을 활용해 보세요.`}`
+        : `사주의 오행 분포가 비교적 고른 편입니다. 이름과의 상호 보완이 안정적입니다.`}
+    </div>
+  </div>`;
+
+  // ── 섹션 4: 발음오행 분석 ──
+  html += `<div class="comp-box">
+    <h4>③ 발음오행(發音五行) 분석</h4>
+    <p style="font-size:.83rem;color:var(--sub);margin-bottom:10px">
+      한글 이름의 첫소리(초성)에도 오행의 기운이 담겨 있습니다. 이름을 소리 내어 부를 때마다 그 오행의 기운이 울려 퍼집니다.
+      <strong>아음(牙音)</strong>은 木·성장, <strong>설음(舌音)</strong>은 火·표현, <strong>순음(脣音)</strong>은 金·결단,
+      <strong>치음(齒音)</strong>은 水·지혜, <strong>후음(喉音)</strong>은 土·안정을 상징합니다.
+    </p>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+      ${filled.map(d => {
+        const b = getBaleumOh(d.reading);
+        return `<div style="text-align:center;background:var(--card2);border:1px solid ${b!==null?OH_COLOR[b]:'var(--border)'};border-radius:8px;padding:8px 12px;min-width:60px">
+          <div style="font-size:1.1rem;font-weight:700;color:${b!==null?OH_COLOR[b]:'var(--sub)'}">${d.char}</div>
+          <div style="font-size:.68rem;color:var(--muted);margin-top:2px">${d.reading}</div>
+          <div style="font-size:.75rem;font-weight:700;color:${b!==null?OH_COLOR[b]:'var(--muted)'}">
+            ${b !== null ? OH_CH[b] : '—'}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="font-size:.8rem;color:var(--sub);line-height:1.7">
+      발음오행 분포: ${[0,1,2,3,4].map(i => nameBal[i] > 0 ? `<strong style="color:${OH_COLOR[i]}">${OH_CH[i]} ${nameBal[i]}회</strong>` : '').filter(Boolean).join(' · ') || '—'}<br>
+      ${nameBal[yongshinOh] > 0
+        ? `✅ 이름 소리에 용신 <strong>${OH_CH[yongshinOh]}</strong> 발음이 포함되어 이름을 부를 때마다 좋은 기운이 전달됩니다.`
+        : `이름 소리에 용신 <strong>${OH_CH[yongshinOh]}</strong> 발음이 없습니다. 자원오행·수리오행으로 보완되어 있다면 큰 문제는 없습니다.`}
+    </div>
+  </div>`;
+
+  // ── 섹션 5: 수리오행 및 81수리 ──
+  html += `<div class="comp-box">
+    <h4>④ 수리오행(數理五行) 및 81수리 분석</h4>
+    <p style="font-size:.83rem;color:var(--sub);margin-bottom:12px">
+      획수에도 오행의 기운이 있습니다. 1·2획=木, 3·4획=火, 5·6획=土, 7·8획=金, 9·10획=水가 반복됩니다.
+      또한 81수리법(數理法)은 이름의 획수 조합으로 천격·인격·지격·외격·총격의 다섯 가지 운세를 분석합니다.
+    </p>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">
+      ${filled.map(d => {
+        const soh = getSuriOh(d.strokes);
+        const s81 = getSuri81(d.strokes);
+        return `<div style="text-align:center;background:var(--card2);border:1px solid ${OH_COLOR[soh]};border-radius:8px;padding:8px 12px;min-width:70px">
+          <div style="font-size:1.1rem;font-weight:700;color:${OH_COLOR[soh]}">${d.char}</div>
+          <div style="font-size:.72rem;color:var(--muted)">${d.strokes}획</div>
+          <div style="font-size:.75rem;font-weight:700;color:${OH_COLOR[soh]}">${OH_CH[soh]}</div>
+          ${s81 ? `<div style="font-size:.65rem;color:var(--muted);margin-top:2px">${s81.n}</div>` : ''}
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="background:var(--card2);border-radius:10px;padding:14px;border:1px solid var(--border)">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+        <div style="font-size:1.6rem;font-weight:800;color:${luckScore>=1?'var(--wood)':luckScore===0?'var(--earth)':'var(--fire)'}">${totalStrokes}획</div>
+        <div>
+          <div style="font-size:.85rem;font-weight:700;color:var(--text)">${jungSuri ? jungSuri.n : '—'}</div>
+          <div style="font-size:.78rem;color:var(--sub)">${jungSuri ? jungSuri.d : '해당 수리 없음'}</div>
+        </div>
+      </div>
+      <div style="font-size:.82rem;color:var(--sub);line-height:1.7">
+        ${luckScore >= 2 ? '🌟 총획이 최상길수(大吉)에 해당합니다. 일생 전반에 걸쳐 강한 길운이 흐르며, 사회적 성취와 재복이 뒤따릅니다. 어떤 분야에서든 두각을 나타낼 잠재력이 큽니다.'
+        : luckScore === 1 ? '✅ 총획이 길수(吉數)에 해당합니다. 꾸준한 노력이 쌓이면 반드시 좋은 결실을 맺는 운세입니다. 인내와 성실함이 성공의 열쇠입니다.'
+        : luckScore === 0 ? '⚖️ 총획이 평수(平數)에 해당합니다. 큰 흉도 없고 큰 길도 없는 안정적인 수리입니다. 오행의 균형과 덕을 쌓는 것으로 운을 더욱 좋게 만들 수 있습니다.'
+        : luckScore === -1 ? '⚠️ 총획이 다소 불리한 수리에 해당합니다. 과도한 욕심이나 조급함을 경계하고, 한 가지에 집중하는 꾸준한 노력이 필요합니다. 오행 보완으로 흉의를 완화할 수 있습니다.'
+        : '⛔ 총획이 흉수(凶數)에 해당합니다. 이름의 수리적 기운이 약하므로, 자원오행·발음오행을 통해 적극적으로 보완하는 것이 좋습니다. 삶에서 덕과 인내를 쌓는 것이 중요합니다.'}
+      </div>
+    </div>
+  </div>`;
+
+  // ── 섹션 6: 용신과 이름의 심층 관계 ──
+  const yongDetail = [
+    {oh:0, how:'동쪽 방향, 초록·청색 계열, 봄·새벽 시간대, 나무·식물 관련 환경을 활용하세요. 이름에 木 오행 한자가 있으면 성장과 추진력이 강해집니다.'},
+    {oh:1, how:'남쪽 방향, 빨강·오렌지 계열, 여름·낮 시간대, 밝고 활동적인 환경을 활용하세요. 이름에 火 오행 한자가 있으면 열정과 사교성이 강화됩니다.'},
+    {oh:2, how:'중앙·남서 방향, 황토·베이지 계열, 환절기·오후 시간대, 안정적이고 넓은 환경을 활용하세요. 이름에 土 오행 한자가 있으면 신뢰와 현실 감각이 높아집니다.'},
+    {oh:3, how:'서쪽 방향, 흰색·은색 계열, 가을·저녁 시간대, 정갈하고 절제된 환경을 활용하세요. 이름에 金 오행 한자가 있으면 결단력과 원칙이 강해집니다.'},
+    {oh:4, how:'북쪽 방향, 검정·감색 계열, 겨울·밤 시간대, 조용하고 깊이 있는 환경을 활용하세요. 이름에 水 오행 한자가 있으면 지혜와 적응력이 깊어집니다.'},
+  ];
+  const yd = yongDetail[yongshinOh];
+  const ilOhStr = OH_KO[ilOh];
+  html += `<div class="comp-box">
+    <h4>⑤ 일간(日干) 기준 용신과 이름의 심층 관계</h4>
+    <p style="font-size:.83rem;color:var(--sub);margin-bottom:12px">
+      일간 <strong style="color:${OH_COLOR[ilOh]}">${STEMS[dp.s]}(${ilOhStr})</strong>은 사주에서 나 자신을 나타내는 핵심 글자입니다.
+      일간의 오행 기운을 보완하고 강화해주는 것이 <strong style="color:${OH_COLOR[yongshinOh]}">용신 ${OH_CH[yongshinOh]}</strong>이며,
+      반대로 일간을 극하거나 과도하게 설기(洩氣)시키는 것이 <strong style="color:${OH_COLOR[gisinOh]}">기신 ${OH_CH[gisinOh]}</strong>입니다.
+    </p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div style="background:${OH_COLOR[yongshinOh]}15;border:1px solid ${OH_COLOR[yongshinOh]}50;border-radius:10px;padding:12px">
+        <div style="font-size:.78rem;font-weight:700;color:${OH_COLOR[yongshinOh]};margin-bottom:6px">✅ 용신 ${OH_CH[yongshinOh]} — ${OH_TRAIT[yongshinOh]}</div>
+        <div style="font-size:.8rem;color:var(--sub);line-height:1.6">
+          이름에 용신 ${OH_CH[yongshinOh]} 기운이 <strong>${nameJari[yongshinOh]}자</strong> 포함되어 있습니다.
+          ${nameJari[yongshinOh] >= 2 ? '두 글자 이상 포함되어 기운이 매우 강합니다.' : nameJari[yongshinOh] === 1 ? '한 글자 포함되어 기운이 적절히 전달됩니다.' : '포함되지 않아 다른 오행 방식으로 보완이 필요합니다.'}
+        </div>
+      </div>
+      <div style="background:${OH_COLOR[gisinOh]}10;border:1px solid ${OH_COLOR[gisinOh]}40;border-radius:10px;padding:12px">
+        <div style="font-size:.78rem;font-weight:700;color:${OH_COLOR[gisinOh]};margin-bottom:6px">⚠️ 기신 ${OH_CH[gisinOh]} — ${OH_TRAIT[gisinOh]}</div>
+        <div style="font-size:.8rem;color:var(--sub);line-height:1.6">
+          이름에 기신 ${OH_CH[gisinOh]} 기운이 <strong>${nameJari[gisinOh]}자</strong> 포함되어 있습니다.
+          ${nameJari[gisinOh] > 0 ? '기신 오행이 포함되어 있으나, 용신 오행이 더 많다면 균형을 유지할 수 있습니다.' : '기신 오행이 이름에 없어 이상적인 구조입니다.'}
+        </div>
+      </div>
+    </div>
+    <div class="advice-box">
+      💡 <strong>용신 ${OH_CH[yongshinOh]} 기운 활용법:</strong> ${yd.how}
+    </div>
+  </div>`;
+
+  // ── 섹션 7: 직업·진로 적합성 ──
+  const careerByOh = [
+    {yong:'木', jobs:'교육·연구·출판·환경·농업·임업·의학·한방·패션·디자인·기획·컨설팅·스타트업 창업'},
+    {yong:'火', jobs:'방송·연예·홍보·마케팅·정치·외교·강연·성형·미용·요식업·조명·에너지·IT'},
+    {yong:'土', jobs:'부동산·금융·보험·건설·행정·관리직·농업·식품·물류·공무원·사회복지·경영'},
+    {yong:'金', jobs:'법조·군경·금융·회계·의료(외과)·기계·제조업·스포츠·무역·귀금속·IT 하드웨어'},
+    {yong:'水', jobs:'학문·철학·역학·예술·음악·수산업·무역·유통·심리상담·작가·외국어·해외 활동'},
+  ];
+  const careerInfo = careerByOh[yongshinOh];
+  const nameJobBoost = nameJari[yongshinOh] > 0 || nameBal[yongshinOh] > 0;
+  html += `<div class="comp-box">
+    <h4>⑥ 이름 오행과 직업·진로 적합성</h4>
+    <p style="font-size:.83rem;color:var(--sub);margin-bottom:12px">
+      용신 오행이 강한 직업 환경에서 일할수록 타고난 기운이 잘 발휘됩니다.
+      이름의 오행이 직업 분야의 오행과 일치하거나 상생 관계이면 그 분야에서 두각을 나타낼 가능성이 높아집니다.
+    </p>
+    <div style="background:${OH_COLOR[yongshinOh]}12;border-left:3px solid ${OH_COLOR[yongshinOh]};border-radius:0 8px 8px 0;padding:12px 14px;margin-bottom:10px">
+      <div style="font-size:.8rem;font-weight:700;color:${OH_COLOR[yongshinOh]};margin-bottom:5px">용신 ${OH_CH[yongshinOh]} 기운과 맞는 직업군</div>
+      <div style="font-size:.82rem;color:var(--sub);line-height:1.7">${careerInfo.jobs}</div>
+    </div>
+    <div style="font-size:.82rem;color:var(--sub);line-height:1.7">
+      ${nameJobBoost
+        ? `이름에 용신 ${OH_CH[yongshinOh]} 오행 기운이 있어, 위의 직업군에서 활동할 때 이름의 기운이 긍정적으로 뒷받침됩니다.`
+        : `이름에 용신 ${OH_CH[yongshinOh]} 오행 기운이 부족합니다. 위의 직업군을 선택할 때 이름 오행을 의식적으로 활용하거나, 작업 환경에서 용신 오행 요소를 강화하면 도움이 됩니다.`}
+      또한 사주의 십신(十神) 구조에서 관(官)이 강한 경우 공직·전문직이, 식상(食傷)이 강한 경우 창작·기술직이 적합하며, 재(財)가 강한 경우 사업·금융 분야와 인연이 깊습니다.
+    </div>
+  </div>`;
+
+  // ── 섹션 8: 건강·관계 측면 ──
+  const healthByOh = [
+    {oh:'木', organ:'간(肝)·담(膽)·근육·눈', care:'과로와 스트레스를 피하고 규칙적인 운동으로 간 기능을 보호하세요.'},
+    {oh:'火', organ:'심장(心臟)·소장·혈관·혀', care:'과도한 흥분과 열성 음식을 절제하고, 충분한 수면으로 심장을 보호하세요.'},
+    {oh:'土', organ:'비(脾)·위장(胃腸)·근육·입', care:'불규칙한 식사와 과식을 피하고, 소화 기능을 규칙적으로 관리하세요.'},
+    {oh:'金', organ:'폐(肺)·대장(大腸)·피부·코', care:'건조한 환경과 매연을 피하고, 깊은 호흡과 충분한 수분 섭취를 권장합니다.'},
+    {oh:'水', organ:'신장(腎臟)·방광·골수·귀', care:'과로와 지나친 성생활을 절제하고, 따뜻하게 하체를 보온하는 것이 중요합니다.'},
+  ];
+  const hOh = ilOh; // 일간의 오행 = 해당 장기
+  const hInfo = healthByOh[hOh];
+  html += `<div class="comp-box">
+    <h4>⑦ 사주·이름 오행과 건강·인간관계 측면</h4>
+    <div style="margin-bottom:12px">
+      <div style="font-size:.8rem;font-weight:700;color:${OH_COLOR[hOh]};margin-bottom:6px">건강 주의 장기: ${hInfo.organ}</div>
+      <p style="font-size:.82rem;color:var(--sub);line-height:1.7">
+        일간 ${STEMS[dp.s]}(${OH_CH[hOh]})은 <strong>${hInfo.organ}</strong>과 연관됩니다.
+        ${hInfo.care}
+        이름에 용신 ${OH_CH[yongshinOh]} 기운이 있으면 전반적인 생명력과 면역력을 지지해 줍니다.
+        반대로 기신 ${OH_CH[gisinOh]} 기운이 이름에 과도하면 관련 장기의 기운이 불안정해질 수 있으니 주의하세요.
       </p>
     </div>
-    <div class="comp-box">
-      <h4>이름 수리(81수리) 종합 운세</h4>
-      <p>이름 전체 획수 합계: <strong>${total}획</strong> → ${jungSuri ? `<strong>${jungSuri.n}</strong>` : '해당 없음'}</p>
-      <p style="margin-top:6px">${overallText}</p>
+    <div>
+      <div style="font-size:.8rem;font-weight:700;color:var(--gold);margin-bottom:6px">인간관계 측면</div>
+      <p style="font-size:.82rem;color:var(--sub);line-height:1.7">
+        이름에 용신 ${OH_CH[yongshinOh]} 기운이 강할수록 ${
+          yongshinOh===0?'인자하고 포용력 있는 인간관계를 맺으며, 성장을 지지해주는 멘토·동료를 끌어당깁니다.':
+          yongshinOh===1?'활발하고 사교적인 인간관계를 맺으며, 다양한 사람들과 활기찬 교류를 이끌어냅니다.':
+          yongshinOh===2?'신뢰 기반의 안정적인 인간관계를 맺으며, 중재자·조력자 역할을 잘 수행합니다.':
+          yongshinOh===3?'원칙 있고 분명한 인간관계를 맺으며, 공정하고 신뢰받는 리더십을 발휘합니다.':
+          '깊고 사려 깊은 인간관계를 맺으며, 조용하지만 강한 영향력을 발휘합니다.'}
+        또한 이름의 발음오행이 상대방의 이름·사주와 상생 관계이면 그 인연이 더욱 긍정적으로 작용합니다.
+      </p>
     </div>
-    <div class="comp-box">
-      <h4>용신(用神)과 이름 오행의 매칭</h4>
-      <p>일간 ${STEMS[dp.s]}(${OH_NAME[ilOh]})을 기준으로 분석한 결과를 이름과 연결합니다.</p>
-      <ul style="margin-top:8px">
-        <li><strong>자원오행(字源五行)</strong>: 한자의 부수·뜻에서 나오는 근본 기운 — 가장 중요한 오행</li>
-        <li><strong>발음오행(發音五行)</strong>: 이름 소리(초성)에 담긴 오행 기운 — 아음牙·설음舌·순음脣·치음齒·후음喉</li>
-        <li><strong>수리오행(數理五行)</strong>: 획수에 따른 수리적 오행 기운 — 1·2획=木, 3·4획=火, 5·6획=土, 7·8획=金, 9·10획=水</li>
-      </ul>
-      <p style="margin-top:8px">이름의 세 가지 오행이 용신(用神)과 상생하거나 일치할수록 이름의 기운이 삶에 긍정적으로 작용합니다.</p>
-    </div>
-    <div class="comp-box">
-      <h4>이름 × 사주 종합 조언</h4>
+  </div>`;
+
+  // ── 섹션 9: 종합 조언 ──
+  html += `<div class="comp-box" style="border-color:var(--gold);background:linear-gradient(135deg,rgba(201,151,58,.06),transparent)">
+    <h4>⑧ 이름 × 사주 종합 조언 및 실천 방법</h4>
+    <div style="font-size:.84rem;color:var(--sub);line-height:1.85">
       <p>
-        ${luckScore >= 1 ? '수리(數理)적으로 길한 이름입니다. ' : '수리(數理)적으로 보완이 필요한 면이 있습니다. '}
-        ${nameSupplements ? '이름의 오행이 사주의 부족한 기운을 보완해주고 있어 매우 긍정적입니다. ' : '이름이 사주의 주도 기운과 비슷하여 그 기운이 더욱 강화됩니다. '}
+        <strong style="color:var(--gold)">▶ 이름의 기운을 최대한 활용하는 방법</strong><br>
+        ${nameBoostYong
+          ? `이름에 용신 <strong style="color:${OH_COLOR[yongshinOh]}">${OH_CH[yongshinOh]}</strong> 기운이 포함되어 있어, 이름을 자주 쓰고 부르는 것 자체가 좋은 기운을 불러옵니다. 공식 서명·명함·프로필에 한자 이름을 적극 활용하면 더욱 효과적입니다.`
+          : `이름의 자원오행이 용신과 완전히 일치하지 않더라도, 이름에 담긴 부모님의 소망과 기원 자체가 강력한 기운입니다. 이름의 뜻을 가슴에 새기고 그 의미대로 살아가는 것이 가장 강력한 실천법입니다.`}
       </p>
-      <p style="margin-top:8px">삼재법(천격·인격·지격)의 상생 관계, 81수리 사격의 운세, 그리고 이름 오행과 사주 용신의 조화를 종합적으로 고려하여 이름의 기운을 이해하세요.</p>
-      <p style="margin-top:8px;font-size:.82rem;color:var(--muted)">※ 이름은 부모님의 사랑과 소망이 담긴 선물입니다. 꾸준한 노력과 올바른 마음가짐이 가장 중요한 요소입니다.</p>
-    </div>`;
+      <p style="margin-top:10px">
+        <strong style="color:var(--gold)">▶ 부족한 오행 기운 보완하기</strong><br>
+        ${weakInSaju.length > 0
+          ? `사주에 <strong style="color:var(--fire)">${weakInSaju.map(i=>OH_CH[i]).join(', ')}</strong> 오행이 없습니다.
+            ${weakInSaju.map(i=>`${OH_CH[i]} 기운은 ${[
+              '동쪽 방향, 초록색, 나무·식물 환경, 신맛 음식으로 보완',
+              '남쪽 방향, 빨간색, 밝은 조명, 쓴맛 음식으로 보완',
+              '중앙, 황토색, 안정된 환경, 단맛 음식으로 보완',
+              '서쪽 방향, 흰색, 정갈한 공간, 매운맛 음식으로 보완',
+              '북쪽 방향, 검정색, 조용한 환경, 짠맛 음식으로 보완'
+            ][i]}`).join(' / ')}하세요.`
+          : `사주의 오행 분포가 균형 잡혀 있어, 이름의 오행과 조화롭게 상호작용합니다.`}
+      </p>
+      <p style="margin-top:10px">
+        <strong style="color:var(--gold)">▶ 대운·세운에서의 활용</strong><br>
+        용신 오행이 강한 대운·세운(年)에는 중요한 결정과 도전을 적극적으로 시도하세요. 기신 오행이 강한 시기에는 신중함을 더하고, 계획보다는 내실을 다지는 데 집중하는 것이 현명합니다.
+        이름의 용신 기운이 뒷받침되는 시기에는 특히 이름 석자를 내걸고 하는 활동(창업·출판·공연·취업)이 좋은 결과를 가져올 가능성이 높습니다.
+      </p>
+      <p style="margin-top:10px">
+        <strong style="color:var(--gold)">▶ 이름과 함께하는 생활 습관</strong><br>
+        용신 ${OH_CH[yongshinOh]} 기운을 일상에서 강화하세요. 자주 사용하는 물건(수첩·컵·소품)의 색상을 용신 오행 색상(${
+          ['초록·청색','빨강·오렌지','황토·베이지','흰색·은색','검정·감색'][yongshinOh]
+        })으로 맞추고, 작업 공간을 용신 방위(${
+          ['동쪽','남쪽','중앙·남서','서쪽','북쪽'][yongshinOh]
+        })로 배치하면 이름의 기운이 생활 공간에서도 강화됩니다.
+      </p>
+    </div>
+    <div style="margin-top:14px;padding:10px 14px;background:var(--card2);border-radius:8px;font-size:.78rem;color:var(--muted);line-height:1.65;border:1px solid var(--border)">
+      ※ 이름은 부모님이 자녀에게 주는 첫 번째 선물이자 평생을 함께하는 기도입니다.
+      사주와 이름의 조화 분석은 삶의 방향을 이해하는 나침반이지, 운명을 고정짓는 것이 아닙니다.
+      <strong>꾸준한 노력·긍정적 마음가짐·올바른 인성</strong>이 어떤 이름보다 강력한 운명 개척의 힘입니다.
+    </div>
+  </div>`;
 
   document.getElementById('compContent').innerHTML = html;
 }
