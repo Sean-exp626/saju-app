@@ -133,6 +133,75 @@ input[type=number]::-webkit-inner-spin-button{opacity:.4}
 .rel-충{color:var(--fire);border-color:var(--fire);background:var(--fire-bg)}
 .rel-형{color:var(--earth);border-color:var(--earth);background:var(--earth-bg)}
 .rel-중립{color:var(--metal);border-color:var(--metal);background:var(--metal-bg)}
+
+/* ── 한자 슬롯 ── */
+.hanja-slots-wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
+@media(max-width:480px){.hanja-slots-wrap{grid-template-columns:repeat(2,1fr)}}
+.hanja-slot{background:var(--card2);border:2px dashed var(--border);border-radius:10px;padding:8px 5px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;min-height:82px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;position:relative}
+.hanja-slot:hover{border-color:var(--gold);background:rgba(201,151,58,.07)}
+.hanja-slot.filled{border-style:solid;border-color:var(--gold)}
+.slot-label{font-size:.63rem;color:var(--muted);letter-spacing:.04em;margin-bottom:1px}
+.slot-char{font-size:1.85rem;font-weight:700;color:var(--gold);line-height:1.1}
+.slot-meaning{font-size:.62rem;color:var(--sub)}
+.slot-empty-text{font-size:.72rem;color:var(--muted);line-height:1.4}
+.slot-oh-row{display:flex;gap:2px;flex-wrap:wrap;justify-content:center;margin-top:3px}
+.slot-clear{position:absolute;top:4px;right:5px;font-size:.65rem;color:var(--muted);background:none;border:none;cursor:pointer;padding:2px 3px;border-radius:3px}
+.slot-clear:hover{color:var(--fire)}
+/* ── 한자 모달 ── */
+#hanjaModal{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.78);align-items:center;justify-content:center;padding:16px}
+#hanjaModal.open{display:flex}
+.modal-box{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;width:100%;max-width:520px;max-height:86vh;display:flex;flex-direction:column;gap:13px}
+.modal-header{display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:.95rem;font-weight:700;color:var(--gold)}
+.modal-close{background:none;border:none;color:var(--sub);font-size:1.3rem;cursor:pointer;padding:4px 8px;border-radius:8px}
+.modal-close:hover{color:var(--text)}
+.modal-input{width:100%;padding:9px 12px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem;font-family:inherit;outline:none}
+.modal-input:focus{border-color:var(--gold)}
+.modal-hint{font-size:.72rem;color:var(--muted);margin-top:-6px}
+.modal-grid{overflow-y:auto;flex:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:7px;padding-right:2px}
+.hanja-btn{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px 5px;text-align:center;cursor:pointer;transition:border-color .15s;display:flex;flex-direction:column;align-items:center;gap:2px}
+.hanja-btn:hover{border-color:var(--gold);background:rgba(201,151,58,.1)}
+.hanja-btn .hb-char{font-size:1.4rem;color:var(--text);line-height:1.1}
+.hanja-btn .hb-meaning{font-size:.6rem;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:76px}
+.hanja-btn .hb-strokes{font-size:.58rem;color:var(--muted)}
+.modal-empty{color:var(--muted);font-size:.83rem;text-align:center;padding:26px 0}
+/* ── 성명학 분석 ── */
+.name-person-title{font-size:.82rem;font-weight:700;margin-bottom:10px;padding:7px 12px;background:var(--card2);border-radius:8px;border-left:3px solid}
+.name-char-card{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:10px}
+.name-char-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-bottom:9px;border-bottom:1px solid var(--border)}
+.name-char-big{font-size:2.4rem;font-weight:700;color:var(--gold);line-height:1}
+.name-char-info{flex:1}
+.name-char-meaning{font-size:.87rem;font-weight:600;color:var(--text);margin-bottom:3px}
+.name-char-strokes{font-size:.73rem;color:var(--sub);margin-bottom:4px}
+.name-char-oh-row{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.oh3-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+@media(max-width:540px){.oh3-grid{grid-template-columns:1fr}}
+.oh3-box{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:11px}
+.oh3-box .ob-type{font-size:.65rem;color:var(--muted);letter-spacing:.05em;margin-bottom:5px;font-weight:600}
+.oh3-box .ob-badge-row{margin-bottom:6px}
+.oh3-box .ob-desc{font-size:.76rem;color:var(--sub);line-height:1.6}
+.samjae-table-wrap{overflow-x:auto;margin-bottom:10px}
+.samjae-table{width:100%;border-collapse:collapse;min-width:260px}
+.samjae-table th,.samjae-table td{padding:7px 9px;text-align:center;border:1px solid var(--border);font-size:.8rem}
+.samjae-table th{background:var(--card2);color:var(--sub);font-size:.7rem;font-weight:600;letter-spacing:.04em}
+.samjae-rel{display:flex;gap:9px;flex-wrap:wrap;margin-top:9px}
+.samjae-rel-item{flex:1;min-width:160px;background:var(--card2);border-radius:8px;border:1px solid var(--border);padding:11px}
+.samjae-rel-item .sr-title{font-size:.7rem;color:var(--muted);margin-bottom:4px;font-weight:600}
+.samjae-rel-item .sr-result{font-size:.8rem;font-weight:700;margin-bottom:3px}
+.samjae-rel-item .sr-desc{font-size:.73rem;color:var(--sub);line-height:1.55}
+.suri-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:10px}
+@media(max-width:580px){.suri-grid{grid-template-columns:repeat(2,1fr)}}
+.suri-card{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:11px;text-align:center}
+.suri-card .sc-type{font-size:.65rem;color:var(--muted);letter-spacing:.05em;margin-bottom:3px;font-weight:600}
+.suri-card .sc-num{font-size:1.7rem;font-weight:700;color:var(--gold);line-height:1}
+.suri-card .sc-name{font-size:.76rem;font-weight:600;color:var(--text);margin:4px 0 3px}
+.suri-card .sc-luck{margin-bottom:6px}
+.suri-card .sc-desc{font-size:.7rem;color:var(--sub);line-height:1.55;text-align:left}
+.luck-2{display:inline-block;background:rgba(201,151,58,.2);color:var(--gold);border:1px solid var(--gold);border-radius:10px;padding:1px 8px;font-size:.66rem;font-weight:700}
+.luck-1{display:inline-block;background:var(--wood-bg);color:var(--wood);border:1px solid var(--wood);border-radius:10px;padding:1px 8px;font-size:.66rem;font-weight:700}
+.luck-0{display:inline-block;background:var(--earth-bg);color:var(--earth);border:1px solid var(--earth);border-radius:10px;padding:1px 8px;font-size:.66rem;font-weight:700}
+.luck--1{display:inline-block;background:var(--fire-bg);color:var(--fire);border:1px solid var(--fire);border-radius:10px;padding:1px 8px;font-size:.66rem;font-weight:700}
+.luck--2{display:inline-block;background:rgba(248,113,113,.3);color:#ff6b6b;border:1px solid #ff6b6b;border-radius:10px;padding:1px 8px;font-size:.66rem;font-weight:700}
 </style>
 </head>
 <body>
@@ -178,6 +247,15 @@ input[type=number]::-webkit-inner-spin-button{opacity:.4}
       <div class="form-row full">
         <div><label>분 (모르면 0)</label><input type="number" id="a_min" placeholder="0" min="0" max="59" value="0"></div>
       </div>
+      <div style="margin-top:6px">
+        <label>이름 한자 <span style="color:var(--muted);font-size:.68rem">(선택사항 — 성명학 분석용)</span></label>
+        <div class="hanja-slots-wrap">
+          <div class="hanja-slot" id="a_slot_0" onclick="openNameModal('a',0)"><span class="slot-label">성 (姓)</span><span class="slot-empty-text">한자<br>선택</span></div>
+          <div class="hanja-slot" id="a_slot_1" onclick="openNameModal('a',1)"><span class="slot-label">이름 1자</span><span class="slot-empty-text">한자<br>선택</span></div>
+          <div class="hanja-slot" id="a_slot_2" onclick="openNameModal('a',2)"><span class="slot-label">이름 2자</span><span class="slot-empty-text">한자<br>선택</span></div>
+          <div class="hanja-slot" id="a_slot_3" onclick="openNameModal('a',3)"><span class="slot-label">이름 3자</span><span class="slot-empty-text">한자<br>선택</span></div>
+        </div>
+      </div>
     </div>
 
     <!-- 두 번째 사람 -->
@@ -211,6 +289,15 @@ input[type=number]::-webkit-inner-spin-button{opacity:.4}
       </div>
       <div class="form-row full">
         <div><label>분 (모르면 0)</label><input type="number" id="b_min" placeholder="0" min="0" max="59" value="0"></div>
+      </div>
+      <div style="margin-top:6px">
+        <label>이름 한자 <span style="color:var(--muted);font-size:.68rem">(선택사항 — 성명학 분석용)</span></label>
+        <div class="hanja-slots-wrap">
+          <div class="hanja-slot" id="b_slot_0" onclick="openNameModal('b',0)"><span class="slot-label">성 (姓)</span><span class="slot-empty-text">한자<br>선택</span></div>
+          <div class="hanja-slot" id="b_slot_1" onclick="openNameModal('b',1)"><span class="slot-label">이름 1자</span><span class="slot-empty-text">한자<br>선택</span></div>
+          <div class="hanja-slot" id="b_slot_2" onclick="openNameModal('b',2)"><span class="slot-label">이름 2자</span><span class="slot-empty-text">한자<br>선택</span></div>
+          <div class="hanja-slot" id="b_slot_3" onclick="openNameModal('b',3)"><span class="slot-label">이름 3자</span><span class="slot-empty-text">한자<br>선택</span></div>
+        </div>
       </div>
     </div>
   </div>
@@ -275,8 +362,29 @@ input[type=number]::-webkit-inner-spin-button{opacity:.4}
       <div id="finalAdvice"></div>
     </div>
 
+    <!-- 성명학 한자 분석 -->
+    <div class="card section" id="nameAnalysisSection" style="display:none">
+      <div class="sec-title">🔤 성명학 한자 분석</div>
+      <div id="nameAnalysisContent"></div>
+    </div>
+
   </div><!-- /results -->
 </div><!-- /container -->
+
+<!-- 한자 모달 -->
+<div id="hanjaModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title" id="modalTitle">한자 선택</span>
+      <button class="modal-close" onclick="closeNameModal()">&#x2715;</button>
+    </div>
+    <input class="modal-input" id="modalInput" type="text" placeholder="한글 음독 입력 (예: 준, 민, 영)" autocomplete="off" oninput="filterNameHanja()">
+    <p class="modal-hint">음독(발음)으로 검색하세요. 예: 준 → 俊 浚 峻...</p>
+    <div class="modal-grid" id="modalGrid">
+      <div class="modal-empty">음독을 입력하면 한자가 표시됩니다</div>
+    </div>
+  </div>
+</div>
 
 <button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
@@ -507,6 +615,7 @@ function analyzeGunghap(){
   renderSokGunghap(adp,bdp,aP,bP,agender,bgender,aColor,bColor);
   renderOvercome(adp,bdp,aP,bP,aCnt,bCnt,scoreData,agender,bgender);
   renderFinalAdvice(adp,bdp,aP,bP,aCnt,bCnt,scoreData,agender,bgender,aColor,bColor);
+  renderNameAnalysis(agender,bgender,aColor,bColor);
 
   document.getElementById('results').style.display='block';
   setTimeout(()=>document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'}),100);
@@ -1456,6 +1565,358 @@ const HD = {
 '흥':[['興',16,'흥할',4],['欣',8,'기쁠',0],['昕',8,'새벽빛',1]],
 '휘':[['輝',15,'빛날',1],['暉',13,'빛날',1],['徽',17,'아름다울',0],['彙',13,'모을',0],['煇',13,'빛날',1],['麾',15,'기',0]],
 };
+
+/* ===== 성명학 상수 ===== */
+const SURI_81=[null,
+{n:'태극(太極)',l:2,d:'만물의 근원. 강한 생명력과 리더십으로 크게 성공하는 최고의 길수.'},
+{n:'분리(分離)',l:-1,d:'이별과 분리의 기운. 고독하고 인연이 얕아 안정을 찾기 어려운 흉수.'},
+{n:'명지(明智)',l:1,d:'총명하고 재능이 넘침. 지혜와 문예가 뛰어나 발전하는 길수.'},
+{n:'사고(四苦)',l:-2,d:'사방이 고난으로 막힘. 좌절과 실패가 많은 대흉수.'},
+{n:'통운(統運)',l:2,d:'강인한 통솔력과 의지. 모든 것을 이끄는 지도자의 수.'},
+{n:'덕귀(德貴)',l:1,d:'덕망이 높고 귀하게 됨. 인격이 훌륭하여 존경받는 수.'},
+{n:'독립(獨立)',l:1,d:'독립심과 자주성이 강함. 스스로 길을 개척하여 성공하는 수.'},
+{n:'발달(發達)',l:1,d:'크게 발전하고 번영함. 문창의 별이 비추는 좋은 수.'},
+{n:'흉패(凶敗)',l:-2,d:'재난과 패망의 기운. 고독하고 어려움이 끊이지 않는 대흉수.'},
+{n:'공허(空虛)',l:-1,d:'공허하고 허무함. 노력이 결실을 맺지 못하는 흉수.'},
+{n:'성취(成就)',l:1,d:'뜻한 바를 이루는 수. 번성하고 성공하는 좋은 길수.'},
+{n:'박약(薄弱)',l:-1,d:'의지와 체력이 박약함. 어려움이 많아 고달픈 흉수.'},
+{n:'지달(智達)',l:1,d:'지혜로 크게 발달함. 문예와 학문에서 두각을 나타내는 길수.'},
+{n:'이산(離散)',l:-1,d:'가족이 이별하고 흩어짐. 고독하고 외로운 흉수.'},
+{n:'복수(福壽)',l:2,d:'복록과 장수를 모두 누림. 모든 것이 풍족한 최고의 길수.'},
+{n:'덕망(德望)',l:2,d:'덕망이 높아 모든 이에게 존경받음. 귀인의 도움이 끊이지 않는 수.'},
+{n:'건창(健暢)',l:1,d:'건강하고 번창함. 앞길이 활짝 열린 발전의 수.'},
+{n:'발전(發展)',l:1,d:'꾸준히 발전하고 성장함. 진취적이고 활발한 수.'},
+{n:'고독(苦獨)',l:-1,d:'고독하고 고통스러움. 외로운 길을 걷는 흉수.'},
+{n:'허망(虛妄)',l:-1,d:'허망하고 공허함. 실패와 좌절이 많은 흉수.'},
+{n:'용두(龍頭)',l:2,d:'용처럼 높이 솟아오름. 권위와 명예가 최고에 이르는 대길수.'},
+{n:'중절(中折)',l:-1,d:'중도에 꺾이고 좌절함. 시작은 좋으나 완성하지 못하는 흉수.'},
+{n:'공명(功名)',l:1,d:'공을 세워 이름을 날림. 명예를 얻는 길한 수.'},
+{n:'입신(立身)',l:2,d:'입신양명하여 크게 성공함. 부귀와 명예를 모두 얻는 대길수.'},
+{n:'영건(榮建)',l:1,d:'영화롭게 건설함. 착실히 쌓아 성공하는 수.'},
+{n:'파란(波瀾)',l:-1,d:'파란만장한 삶. 변화가 심하고 불안정한 흉수.'},
+{n:'중단(中斷)',l:-1,d:'중도에 단절됨. 일이 완성되지 못하고 중단되는 흉수.'},
+{n:'파탄(破歎)',l:-2,d:'파멸과 탄식. 모든 것이 무너지는 최대 흉수.'},
+{n:'공명(功名)',l:1,d:'재능으로 공을 세워 유명해짐. 이름을 날리는 길수.'},
+{n:'허무(虛無)',l:-1,d:'허무하고 비어있음. 헛된 노력이 많은 흉수.'},
+{n:'공명(公明)',l:2,d:'공정하고 밝음. 재능으로 크게 성공하는 대길수.'},
+{n:'요행(僥倖)',l:1,d:'뜻밖의 행운이 따름. 의외의 기회가 오는 길수.'},
+{n:'등천(登天)',l:2,d:'하늘에 오르는 기운. 최고의 자리에 오르는 대길수.'},
+{n:'파멸(破滅)',l:-2,d:'완전한 파멸. 모든 것이 허물어지는 최흉수.'},
+{n:'안강(安康)',l:1,d:'편안하고 건강함. 안정된 삶을 사는 길수.'},
+{n:'영웅(英雄)',l:1,d:'영웅의 기질. 강한 의지로 난관을 극복하는 수.'},
+{n:'출세(出世)',l:1,d:'세상에 이름을 떨침. 재능을 인정받아 출세하는 수.'},
+{n:'부명(富名)',l:1,d:'부자가 되고 명성을 얻음. 물질적 성공을 이루는 수.'},
+{n:'부강(富强)',l:2,d:'부유하고 강함. 물질적으로 풍족하고 건강한 대길수.'},
+{n:'허무(虛無)',l:-1,d:'허무하고 고달픔. 노력해도 결실이 없는 흉수.'},
+{n:'고명(高名)',l:2,d:'높은 명성을 얻음. 세상에 이름을 크게 알리는 대길수.'},
+{n:'고난(苦難)',l:-1,d:'고난이 많고 어려움. 역경 속에서 힘겨운 흉수.'},
+{n:'활발(活潑)',l:1,d:'활발하고 진취적. 생동감 넘치는 발전의 수.'},
+{n:'마장(魔障)',l:-2,d:'마귀가 방해함. 하는 일마다 장애가 생기는 최흉수.'},
+{n:'적덕(積德)',l:2,d:'덕을 쌓아 번영함. 주변의 도움으로 크게 성공하는 대길수.'},
+{n:'보통(普通)',l:0,d:'평범하고 보통. 크게 나쁘지도 좋지도 않은 중간의 수.'},
+{n:'개운(開運)',l:1,d:'운이 열리고 새로운 기회가 옴. 발전하는 길수.'},
+{n:'수명(壽名)',l:2,d:'장수하고 명성을 얻음. 건강하게 오래 사는 대길수.'},
+{n:'은우(隱憂)',l:0,d:'숨겨진 근심이 있음. 겉은 좋아 보이나 내면에 걱정이 있는 수.'},
+{n:'변화(變化)',l:0,d:'변화가 많고 불안정. 길흉이 반반인 주의가 필요한 수.'},
+{n:'길흉반(吉凶半)',l:0,d:'길과 흉이 반반. 방심하지 말고 신중해야 하는 수.'},
+{n:'신인(信人)',l:1,d:'신뢰받는 사람. 믿음과 성실함으로 성공하는 수.'},
+{n:'내우(內憂)',l:-1,d:'내부에 걱정이 많음. 겉과 속이 다른 불안한 흉수.'},
+{n:'파산(破散)',l:-1,d:'파산하고 흩어짐. 재산과 인연이 흩어지는 흉수.'},
+{n:'불완(不完)',l:-1,d:'불완전하고 미완성. 일이 완성되지 않는 흉수.'},
+{n:'박약(薄弱)',l:-1,d:'박약하고 체력이 약함. 의지와 체력이 부족한 흉수.'},
+{n:'발전(發展)',l:1,d:'꾸준히 발전함. 인내로 성공하는 길수.'},
+{n:'선후길(先後吉)',l:0,d:'처음은 어렵고 나중에 길함. 인내하면 성공하는 수.'},
+{n:'불우(不遇)',l:-1,d:'불우하고 기회를 잡지 못함. 노력해도 인정받지 못하는 흉수.'},
+{n:'불안(不安)',l:-1,d:'불안정하고 마음이 고달픔. 안정을 찾기 어려운 흉수.'},
+{n:'인덕(仁德)',l:1,d:'인덕이 있어 도움을 받음. 주변의 신뢰와 사랑을 받는 수.'},
+{n:'쇠망(衰亡)',l:-2,d:'쇠퇴하고 망함. 점점 내려가는 최흉수.'},
+{n:'길상(吉祥)',l:2,d:'길상스럽고 상서로움. 모든 일이 순조로운 대길수.'},
+{n:'흉패(凶敗)',l:-2,d:'흉하고 패함. 하는 일마다 실패하는 최흉수.'},
+{n:'화광(和光)',l:1,d:'화평하고 빛남. 인화로 성공하는 길수.'},
+{n:'퇴보(退步)',l:-1,d:'퇴보하고 물러남. 앞으로 나아가지 못하는 흉수.'},
+{n:'건창(健暢)',l:1,d:'건강하고 번창함. 지속적으로 성장하는 길수.'},
+{n:'명지(明智)',l:1,d:'명석하고 지혜로움. 두뇌가 명석하여 성공하는 수.'},
+{n:'쇠퇴(衰退)',l:-1,d:'쇠퇴하고 후퇴함. 점차 기운이 빠지는 흉수.'},
+{n:'허망(虛妄)',l:-1,d:'허망하고 망상이 많음. 실속 없이 헛된 흉수.'},
+{n:'길리(吉利)',l:1,d:'길하고 이로움. 하는 일마다 이익이 따르는 수.'},
+{n:'흉운(凶運)',l:-1,d:'흉한 운이 따름. 불운이 계속되는 흉수.'},
+{n:'안강(安康)',l:1,d:'안정되고 건강함. 편안한 삶을 사는 길수.'},
+{n:'부달(不達)',l:-1,d:'목적을 달성하지 못함. 뜻대로 되지 않는 흉수.'},
+{n:'명예(名譽)',l:1,d:'명예롭고 귀한 삶. 사회적 신망을 얻는 수.'},
+{n:'파란(波瀾)',l:-1,d:'파란만장. 삶의 기복이 심한 흉수.'},
+{n:'단절(斷折)',l:-1,d:'단절되고 꺾임. 중도에 포기하게 되는 흉수.'},
+{n:'보통(普通)',l:0,d:'평범한 삶. 큰 기복 없이 보통으로 사는 수.'},
+{n:'불운(不運)',l:-1,d:'불운하고 고달픔. 운이 따르지 않는 흉수.'},
+{n:'공허(空虛)',l:-1,d:'공허하고 텅빔. 채워지지 않는 허탈함의 수.'},
+{n:'환원(還元)',l:2,d:'근원으로 돌아옴. 완전한 원만함과 완성을 상징하는 대길수.'},
+];
+
+const SLOT_LABELS=['성 (姓)','이름 1자','이름 2자','이름 3자'];
+const BALEUMOH_MAP={'ㄱ':0,'ㅋ':0,'ㄴ':1,'ㄷ':1,'ㄹ':1,'ㅌ':1,'ㅁ':2,'ㅂ':2,'ㅍ':2,'ㅅ':3,'ㅈ':3,'ㅊ':3,'ㅇ':4,'ㅎ':4};
+const JARIOH_DESC={0:['木(목)','나무·풀 계통의 부수를 포함합니다. 자원오행은 木입니다.'],1:['火(화)','불·빛 계통의 부수를 포함합니다. 자원오행은 火입니다.'],2:['土(토)','흙·산 계통의 부수를 포함합니다. 자원오행은 土입니다.'],3:['金(금)','쇠·금속·옥 계통의 부수를 포함합니다. 자원오행은 金입니다.'],4:['水(수)','물·강 계통의 부수를 포함합니다. 자원오행은 水입니다.']};
+const SURIOH_RANGE=['1·2획은 木에 해당합니다.','3·4획은 火에 해당합니다.','5·6획은 土에 해당합니다.','7·8획은 金에 해당합니다.','9·10획은 水에 해당합니다.'];
+
+/* ===== 슬롯 상태 ===== */
+let aSlotData=[null,null,null,null];
+let bSlotData=[null,null,null,null];
+let _nmPerson=null,_nmIdx=null;
+
+/* ===== 성명학 헬퍼 ===== */
+function getChosung(syl){
+  if(!syl)return null;
+  const code=syl.charCodeAt(0)-0xAC00;
+  if(code<0||code>11171)return null;
+  const CHOSUNG=['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+  return CHOSUNG[Math.floor(code/588)];
+}
+function getBaleumOh(reading){
+  if(!reading)return null;
+  const cho=getChosung(reading[0]);
+  if(cho===null)return null;
+  const v=BALEUMOH_MAP[cho];
+  return v!==undefined?v:null;
+}
+function getSuriOh(strokes){return Math.floor(((strokes-1)%10)/2);}
+function getSuri81(n){
+  if(n<=0)return null;
+  const idx=n>81?((n-1)%81)+1:n;
+  return SURI_81[idx]||null;
+}
+function getBaleumInfo(reading,boh){
+  if(!reading)return '음독 정보가 없습니다.';
+  const cho=getChosung(reading[0]);
+  if(cho===null||boh===null)return `음독 '${reading}'의 초성을 파악할 수 없습니다.`;
+  const map={
+    0:`초성 ${cho}(ㄱ/ㅋ)은 어금닛소리 <strong>아음(牙音)</strong>입니다. 전통 성명학에서 아음은 <strong>木</strong> 오행에 배속됩니다.`,
+    1:`초성 ${cho}(ㄴ/ㄷ/ㄹ/ㅌ)은 혀소리 <strong>설음(舌音)</strong>입니다. 전통 성명학에서 설음은 <strong>火</strong> 오행에 배속됩니다.`,
+    2:`초성 ${cho}(ㅁ/ㅂ/ㅍ)은 입술소리 <strong>순음(脣音)</strong>입니다. 전통 성명학에서 순음은 <strong>土</strong> 오행에 배속됩니다.`,
+    3:`초성 ${cho}(ㅅ/ㅈ/ㅊ)은 잇소리 <strong>치음(齒音)</strong>입니다. 전통 성명학에서 치음은 <strong>金</strong> 오행에 배속됩니다.`,
+    4:`초성 ${cho}(ㅇ/ㅎ)은 목구멍소리 <strong>후음(喉音)</strong>입니다. 전통 성명학에서 후음은 <strong>水</strong> 오행에 배속됩니다.`,
+  };
+  return `음독 '<strong>${reading}</strong>'의 초성은 <strong>${cho}</strong>으로, ${map[boh]}<br>따라서 발음오행은 <strong>${OH_NAME[boh]}</strong>입니다.`;
+}
+function nmOhRelationText(from,to){
+  const sheng=[1,2,0,4,3],ke=[2,3,4,0,1];
+  const fn=OH_NAME[from],tn=OH_NAME[to];
+  if(sheng[from]===to)return{type:'good',text:`${fn}→${tn} 상생(相生) — ${fn}이 ${tn}을 생하여 길합니다.`};
+  if(ke[from]===to)return{type:'bad',text:`${fn}→${tn} 상극(相剋) — ${fn}이 ${tn}을 극하여 주의가 필요합니다.`};
+  if(sheng[to]===from)return{type:'ok',text:`${tn}→${fn} 상생(相生) — ${tn}이 ${fn}을 생하여 무난합니다.`};
+  if(ke[to]===from)return{type:'bad',text:`${tn}→${fn} 상극(相剋) — ${tn}이 ${fn}을 극하여 주의가 필요합니다.`};
+  return{type:'ok',text:`${fn}과 ${tn}은 비화(比和) 관계입니다.`};
+}
+
+/* ===== 모달 ===== */
+function openNameModal(person,idx){
+  _nmPerson=person; _nmIdx=idx;
+  const labels=SLOT_LABELS;
+  document.getElementById('modalTitle').textContent=labels[idx]+' 한자 선택';
+  document.getElementById('modalInput').value='';
+  document.getElementById('modalGrid').innerHTML='<div class="modal-empty">음독을 입력하면 한자가 표시됩니다</div>';
+  document.getElementById('hanjaModal').classList.add('open');
+  setTimeout(()=>document.getElementById('modalInput').focus(),100);
+}
+function closeNameModal(){
+  document.getElementById('hanjaModal').classList.remove('open');
+  _nmPerson=null; _nmIdx=null;
+}
+document.getElementById('hanjaModal').addEventListener('click',function(e){if(e.target===this)closeNameModal();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeNameModal();});
+function filterNameHanja(){
+  const val=document.getElementById('modalInput').value.trim();
+  const grid=document.getElementById('modalGrid');
+  if(!val){grid.innerHTML='<div class="modal-empty">음독을 입력하면 한자가 표시됩니다</div>';return;}
+  const list=HD[val];
+  if(!list||list.length===0){grid.innerHTML='<div class="modal-empty">해당 음독의 한자가 없습니다.<br>다른 발음을 시도해보세요.</div>';return;}
+  grid.innerHTML=list.map(([ch,st,mn,el])=>
+    `<button class="hanja-btn" onclick="selectNameHanja('${ch}',${st},'${mn}',${el},'${val}')">
+      <span class="hb-char">${ch}</span>
+      <span class="hb-meaning">${mn}</span>
+      <span class="hb-strokes">${st}획 · ${OH_NAME[el]}</span>
+    </button>`
+  ).join('');
+}
+function selectNameHanja(ch,strokes,meaning,jarioh,reading){
+  const sd=_nmPerson==='a'?aSlotData:bSlotData;
+  sd[_nmIdx]={char:ch,strokes,meaning,jarioh,reading};
+  renderNameSlot(_nmPerson,_nmIdx);
+  closeNameModal();
+}
+function renderNameSlot(person,idx){
+  const sd=person==='a'?aSlotData:bSlotData;
+  const slot=document.getElementById(person+'_slot_'+idx);
+  const d=sd[idx];
+  if(!d){
+    slot.className='hanja-slot';
+    slot.innerHTML=`<span class="slot-label">${SLOT_LABELS[idx]}</span><span class="slot-empty-text">한자<br>선택</span>`;
+    slot.onclick=()=>openNameModal(person,idx);
+    return;
+  }
+  const boh=getBaleumOh(d.reading);
+  const soh=getSuriOh(d.strokes);
+  slot.className='hanja-slot filled';
+  slot.innerHTML=`
+    <button class="slot-clear" onclick="clearNameSlot(event,'${person}',${idx})">&#x2715;</button>
+    <span class="slot-label">${SLOT_LABELS[idx]}</span>
+    <span class="slot-char">${d.char}</span>
+    <span class="slot-meaning">${d.meaning}(${d.strokes}획)</span>
+    <div class="slot-oh-row">
+      ${ohBadge(d.jarioh)}
+      ${boh!==null?ohBadge(boh):''}
+      ${ohBadge(soh)}
+    </div>`;
+  slot.onclick=()=>openNameModal(person,idx);
+}
+function clearNameSlot(e,person,idx){
+  e.stopPropagation();
+  (person==='a'?aSlotData:bSlotData)[idx]=null;
+  renderNameSlot(person,idx);
+}
+
+/* ===== 성명학 렌더 ===== */
+function renderPersonSungmyung(slotData){
+  let html='';
+  slotData.forEach((d,i)=>{
+    if(!d)return;
+    const boh=getBaleumOh(d.reading);
+    const soh=getSuriOh(d.strokes);
+    const jariInfo=JARIOH_DESC[d.jarioh];
+    const baleumInfo=getBaleumInfo(d.reading,boh);
+    html+=`
+    <div class="name-char-card">
+      <div class="name-char-header">
+        <div class="name-char-big">${d.char}</div>
+        <div class="name-char-info">
+          <div class="name-char-meaning">${d.meaning} — 음독: <strong>${d.reading}</strong></div>
+          <div class="name-char-strokes">${d.strokes}획 · ${SLOT_LABELS[i]}</div>
+          <div class="name-char-oh-row">
+            <span style="font-size:.68rem;color:var(--muted);margin-right:3px">자원:</span>${ohBadge(d.jarioh)}
+            ${boh!==null?`<span style="font-size:.68rem;color:var(--muted);margin-left:6px;margin-right:3px">발음:</span>${ohBadge(boh)}`:''}
+            <span style="font-size:.68rem;color:var(--muted);margin-left:6px;margin-right:3px">수리:</span>${ohBadge(soh)}
+          </div>
+        </div>
+      </div>
+      <div class="oh3-grid">
+        <div class="oh3-box">
+          <div class="ob-type">자원오행(字源五行)</div>
+          <div class="ob-badge-row">${ohBadge(d.jarioh)}</div>
+          <div class="ob-desc"><strong>${d.char}</strong>자는 ${jariInfo[1]}<br>자원오행: <strong>${jariInfo[0]}</strong></div>
+        </div>
+        <div class="oh3-box">
+          <div class="ob-type">발음오행(發音五行)</div>
+          <div class="ob-badge-row">${boh!==null?ohBadge(boh):'<span style="color:var(--muted);font-size:.78rem">해당없음</span>'}</div>
+          <div class="ob-desc">${baleumInfo}</div>
+        </div>
+        <div class="oh3-box">
+          <div class="ob-type">수리오행(數理五行)</div>
+          <div class="ob-badge-row">${ohBadge(soh)}</div>
+          <div class="ob-desc"><strong>${d.char}</strong>자는 <strong>${d.strokes}획</strong>.<br>${SURIOH_RANGE[soh]}<br>수리오행: <strong>${OH_NAME[soh]}</strong></div>
+        </div>
+      </div>
+    </div>`;
+  });
+  return html||'<p style="color:var(--muted);font-size:.85rem">한자가 선택되지 않았습니다.</p>';
+}
+
+function renderPersonSamjae(slotData){
+  const valid=slotData.filter(s=>s!==null);
+  if(valid.length<2)return '<p style="color:var(--muted);font-size:.83rem">삼재법 분석을 위해 성(1자)+이름(1자 이상) 필요합니다.</p>';
+  const A=slotData[0],B=slotData[1],C=slotData[2];
+  if(!A||!B)return '<p style="color:var(--muted);font-size:.83rem">성과 이름 1자 이상이 필요합니다.</p>';
+  const chungSt=A.strokes;
+  const inSt=A.strokes+B.strokes;
+  const jiSt=C?(B.strokes+C.strokes):B.strokes;
+  const chungOh=getSuriOh(chungSt),inOh=getSuriOh(inSt),jiOh=getSuriOh(jiSt);
+  const ci=nmOhRelationText(chungOh,inOh);
+  const ij=nmOhRelationText(inOh,jiOh);
+  const allGood=ci.type!=='bad'&&ij.type!=='bad';
+  const allBad=ci.type==='bad'&&ij.type==='bad';
+  const judgment=allGood?'천격·인격·지격이 상생하거나 조화롭습니다. 이름의 기운이 순탄하게 흐릅니다.':allBad?'천격·인격·지격 사이에 상극 관계가 존재합니다. 이름 오행 보완을 고려해보세요.':'일부 구간에서 상생, 일부에서 상극이 나타납니다. 전반적으로 무난하나 주의가 필요한 구간이 있습니다.';
+  return `
+    <div class="samjae-table-wrap">
+      <table class="samjae-table">
+        <thead><tr><th>천격(天格) — 성 ${A.char}</th><th>인격(人格) — 성+이름1</th><th>지격(地格) — ${C?'이름1+이름2':'이름1'}</th></tr></thead>
+        <tbody>
+          <tr><td>${chungSt}획</td><td>${inSt}획</td><td>${jiSt}획</td></tr>
+          <tr><td>${ohBadge(chungOh)}</td><td>${ohBadge(inOh)}</td><td>${ohBadge(jiOh)}</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="samjae-rel">
+      <div class="samjae-rel-item">
+        <div class="sr-title">천격 → 인격 관계</div>
+        <div class="sr-result ${ci.type==='good'?'rel-good':ci.type==='bad'?'rel-bad':'rel-neutral'}">${ci.text.split('—')[0]}</div>
+        <div class="sr-desc">${ci.text}</div>
+      </div>
+      <div class="samjae-rel-item">
+        <div class="sr-title">인격 → 지격 관계</div>
+        <div class="sr-result ${ij.type==='good'?'rel-good':ij.type==='bad'?'rel-bad':'rel-neutral'}">${ij.text.split('—')[0]}</div>
+        <div class="sr-desc">${ij.text}</div>
+      </div>
+    </div>
+    <div style="padding:10px 12px;background:var(--card2);border:1px solid var(--border);border-radius:8px;margin-top:8px;font-size:.82rem;color:var(--sub);line-height:1.65">${judgment}</div>`;
+}
+
+function renderPersonSuri81(slotData){
+  const filled=slotData.filter(s=>s!==null);
+  if(filled.length<2)return '<p style="color:var(--muted);font-size:.83rem">81수리 분석을 위해 2자 이상 선택해주세요.</p>';
+  const A=slotData[0];
+  const nameSum=slotData.slice(1).filter(s=>s!==null).reduce((a,s)=>a+s.strokes,0);
+  const total=filled.reduce((a,s)=>a+s.strokes,0);
+  const formats=[
+    {type:'원격(元格)',sub:'초년운',st:A?A.strokes:0},
+    {type:'형격(亨格)',sub:'중년운',st:total},
+    {type:'이격(利格)',sub:'청장년운',st:nameSum},
+    {type:'정격(貞格)',sub:'총운',st:total},
+  ];
+  let html='<div class="suri-grid">';
+  formats.forEach(f=>{
+    const suri=getSuri81(f.st);
+    if(!suri)return;
+    const luckLabel={2:'대길(大吉)',1:'길(吉)',0:'평(平)','-1':'흉(凶)','-2':'대흉(大凶)'}[suri.l];
+    const luckClass='luck-'+suri.l;
+    html+=`<div class="suri-card">
+      <div class="sc-type">${f.type}</div>
+      <div style="font-size:.68rem;color:var(--muted);margin-bottom:4px">${f.sub}</div>
+      <div class="sc-num">${f.st}</div>
+      <div class="sc-name">${suri.n}</div>
+      <div class="sc-luck"><span class="${luckClass}">${luckLabel}</span></div>
+      <div class="sc-desc">${suri.d}</div>
+    </div>`;
+  });
+  html+='</div>';
+  return html;
+}
+
+function renderNameAnalysis(agender,bgender,aColor,bColor){
+  const aHasName=aSlotData.some(s=>s!==null);
+  const bHasName=bSlotData.some(s=>s!==null);
+  if(!aHasName&&!bHasName){
+    document.getElementById('nameAnalysisSection').style.display='none';
+    return;
+  }
+  const aLabel=agender==='male'?'남 (첫 번째 사람)':'여 (첫 번째 사람)';
+  const bLabel=bgender==='male'?'남 (두 번째 사람)':'여 (두 번째 사람)';
+  let html='';
+  if(aHasName){
+    html+=`<div class="name-person-title" style="border-color:${aColor};color:${aColor}">● ${aLabel} 성명학 분석</div>`;
+    html+=renderPersonSungmyung(aSlotData);
+    html+='<div style="margin:10px 0 4px;font-size:.78rem;font-weight:700;color:var(--gold)">삼재법 (三才法)</div>';
+    html+=renderPersonSamjae(aSlotData);
+    html+='<div style="margin:10px 0 4px;font-size:.78rem;font-weight:700;color:var(--gold)">81수리 사격 (四格)</div>';
+    html+=renderPersonSuri81(aSlotData);
+  }
+  if(bHasName){
+    if(aHasName)html+='<hr style="border:none;border-top:1px solid var(--border);margin:18px 0">';
+    html+=`<div class="name-person-title" style="border-color:${bColor};color:${bColor}">● ${bLabel} 성명학 분석</div>`;
+    html+=renderPersonSungmyung(bSlotData);
+    html+='<div style="margin:10px 0 4px;font-size:.78rem;font-weight:700;color:var(--gold)">삼재법 (三才法)</div>';
+    html+=renderPersonSamjae(bSlotData);
+    html+='<div style="margin:10px 0 4px;font-size:.78rem;font-weight:700;color:var(--gold)">81수리 사격 (四格)</div>';
+    html+=renderPersonSuri81(bSlotData);
+  }
+  document.getElementById('nameAnalysisContent').innerHTML=html;
+  document.getElementById('nameAnalysisSection').style.display='block';
+}
 
 /* ===== 스크롤 탑 ===== */
 window.addEventListener('scroll',()=>{
